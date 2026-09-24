@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}{% if object %}Editar{% else %}Nuevo meme{% endif %}{% endblock %}
+
+{% block contenido %}
+<div class="caja">
+  <h1>{% if object %}Editar «{{ object.titulo }}»{% else %}Nuevo meme{% endif %}</h1>
+
+  <form method="post">
+    {% csrf_token %}          {# obligatorio en todo form POST; sin él → 403 #}
+    {{ form.as_p }}
+    <div class="acciones">
+      <button class="btn" type="submit">Guardar</button>
+      <a class="btn claro" href="{% if object %}{% url 'meme_detail' object.pk %}{% else %}{% url 'meme_list' %}{% endif %}">Cancelar</a>
+    </div>
+  </form>
+
+  <p class="meta" style="margin-top:1rem">Vista previa:</p>
+  <img id="preview" src="{{ form.url_imagen.value|default:'' }}" alt="" style="max-width:100%;border-radius:8px;{% if not form.url_imagen.value %}display:none{% endif %}">
+  <script>
+    const campo = document.getElementById('id_url_imagen');
+    const img = document.getElementById('preview');
+    campo.addEventListener('input', () => { img.src = campo.value; img.style.display = campo.value ? '' : 'none'; });
+  </script>
+</div>
+{% endblock %}
